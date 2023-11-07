@@ -6,14 +6,26 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+# jobs run in parallel (note only have limited number of concurrent jobs)
+# looks like job names can be anything
 
+jobs:
+  # run ts transpiler just to check that there
+  # are no type issues in codebase
+  build-ts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npm run build
+
+  run-unit-tests:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
       - run: npm ci
       - run: npm test
-      - run: npm run build
